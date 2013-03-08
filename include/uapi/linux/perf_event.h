@@ -137,8 +137,9 @@ enum perf_event_sample_format {
 	PERF_SAMPLE_DATA_SRC			= 1U << 15,
 	PERF_SAMPLE_IDENTIFIER			= 1U << 16,
 	PERF_SAMPLE_TRANSACTION			= 1U << 17,
+	PERF_SAMPLE_AUX				= 1U << 18,
 
-	PERF_SAMPLE_MAX = 1U << 18,		/* non-ABI */
+	PERF_SAMPLE_MAX = 1U << 19,		/* non-ABI */
 };
 
 /*
@@ -239,6 +240,9 @@ enum perf_event_read_format {
 #define PERF_ATTR_SIZE_VER3	96	/* add: sample_regs_user */
 					/* add: sample_stack_user */
 					/* add: aux_watermark */
+#define PERF_ATTR_SIZE_VER4	120	/* add: aux_sample_config */
+					/* add: aux_sample_size */
+					/* add: aux_sample_type */
 
 /*
  * Hardware event_id to monitor via a performance monitoring event:
@@ -337,6 +341,16 @@ struct perf_event_attr {
 	 * Wakeup watermark for AUX area
 	 */
 	__u32	aux_watermark;
+
+	/*
+	 * Itrace pmus' event config
+	 */
+	__u64	aux_sample_config;	/* event config for AUX sampling */
+	__u64	aux_sample_size;	/* desired sample size */
+	__u32	aux_sample_type;	/* pmu->type of an AUX PMU */
+
+	/* Align to u64. */
+	__u32	__reserved_2;
 };
 
 #define perf_flags(attr)	(*(&(attr)->read_format + 1))
@@ -710,6 +724,8 @@ enum perf_event_type {
 	 *	{ u64			weight;   } && PERF_SAMPLE_WEIGHT
 	 *	{ u64			data_src; } && PERF_SAMPLE_DATA_SRC
 	 *	{ u64			transaction; } && PERF_SAMPLE_TRANSACTION
+	 *	{ u64			size;
+	 *	  char			data[size]; } && PERF_SAMPLE_AUX
 	 * };
 	 */
 	PERF_RECORD_SAMPLE			= 9,
