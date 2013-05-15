@@ -169,6 +169,11 @@ enum {
 	PERF_FLAG_TRACE_BEGIN	|\
 	PERF_FLAG_TRACE_END)
 
+struct itrace_sample {
+	u64 size;
+	void *data;
+};
+
 struct perf_sample {
 	u64 ip;
 	u32 pid, tid;
@@ -190,6 +195,7 @@ struct perf_sample {
 	struct regs_dump  user_regs;
 	struct stack_dump user_stack;
 	struct sample_read read;
+	struct itrace_sample itrace_sample;
 };
 
 #define PERF_MEM_DATA_SRC_NONE \

@@ -1027,7 +1027,7 @@ int perf_session__peek_event(struct perf_session *session, off_t file_offset,
 out_parse_sample:
 
 	if (sample && event->header.type < PERF_RECORD_USER_TYPE_START &&
-	    perf_evlist__parse_sample(session->evlist, event, sample))
+	    __perf_evlist__parse_sample(session->evlist, event, sample, true))
 		return -1;
 
 	*event_ptr = event;
@@ -1057,7 +1057,8 @@ static s64 perf_session__process_event(struct perf_session *session,
 	/*
 	 * For all kernel events we get the sample data
 	 */
-	ret = perf_evlist__parse_sample(session->evlist, event, &sample);
+	ret = __perf_evlist__parse_sample(session->evlist, event, &sample,
+					  true);
 	if (ret)
 		return ret;
 
