@@ -645,6 +645,11 @@ int perf_session_queue_event(struct perf_session *s, union perf_event *event,
 	struct ordered_events *oe = &s->ordered_events;
 	u64 timestamp = sample->time;
 	struct ordered_event *new;
+	int err;
+
+	err = itrace__queue_event(s, event, sample);
+	if (err)
+		return err;
 
 	if (!timestamp || timestamp == ~0ULL)
 		return -ETIME;
@@ -786,6 +791,10 @@ static void dump_event(struct perf_session *session, union perf_event *event,
 	       file_offset, event->header.size, event->header.type);
 
 	trace_event(event);
+
+	/* Instruction trace sample is so big it is better printed here */
+	if (sample && sample->itrace_sample.size)
+		itrace__dump_itrace_sample(session, sample);
 
 	if (sample)
 		perf_session__print_tstamp(session, event, sample);
