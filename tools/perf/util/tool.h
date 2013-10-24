@@ -48,7 +48,8 @@ struct perf_tool {
 	event_op2	finished_round,
 			build_id,
 			id_index,
-			itrace_info;
+			itrace_info,
+			itrace_error;
 	event_op3	itrace;
 	bool		ordered_events;
 	bool		ordering_requires_timestamps;
