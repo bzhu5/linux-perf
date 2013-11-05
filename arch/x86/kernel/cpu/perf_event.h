@@ -752,6 +752,12 @@ int intel_pmu_setup_lbr_filter(struct perf_event *event);
 
 void intel_pt_interrupt(void);
 
+int intel_bts_interrupt(void);
+
+void intel_bts_enable_local(void);
+
+void intel_bts_disable_local(void);
+
 int p4_pmu_init(void);
 
 int p6_pmu_init(void);
