@@ -38,6 +38,7 @@ struct record {
 	u64			bytes_written;
 	struct perf_data_file	file;
 	struct itrace_record	*itr;
+	char			*itrace_type;
 	struct perf_evlist	*evlist;
 	struct perf_session	*session;
 	const char		*progname;
@@ -841,6 +842,12 @@ static int perf_record_config(const char *var, const char *value, void *cb)
 	if (!strcmp(var, "record.call-graph"))
 		var = "call-graph.record-mode"; /* fall-through */
 
+	if (!strcmp(var, "record.itrace-type")) {
+		struct record *rec = cb;
+		rec->itrace_type = strdup(value);
+		return 0;
+	}
+
 	return perf_default_config(var, value, cb);
 }
 
@@ -1021,7 +1028,9 @@ int cmd_record(int argc, const char **argv, const char *prefix __maybe_unused)
 	struct record *rec = &record;
 	char errbuf[BUFSIZ];
 
-	rec->itr = itrace_record__init(&err);
+	perf_config(perf_record_config, rec);
+
+	rec->itr = itrace_record__init(rec->itrace_type, argc, argv, &err);
 	if (err)
 		return err;
 
@@ -1029,8 +1038,6 @@ int cmd_record(int argc, const char **argv, const char *prefix __maybe_unused)
 	rec->evlist = perf_evlist__new();
 	if (rec->evlist == NULL)
 		goto out_itrace_free;
-
-	perf_config(perf_record_config, rec);
 
 	argc = parse_options(argc, argv, record_options, record_usage,
 			    PARSE_OPT_STOP_AT_NON_OPTION);
@@ -1103,6 +1110,7 @@ out_symbol_exit:
 	symbol__exit();
 out_itrace_free:
 	itrace_record__free(rec->itr);
+	zfree(&rec->itrace_type);
 	return err;
 }
 
