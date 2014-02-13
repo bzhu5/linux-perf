@@ -111,6 +111,7 @@ struct dso {
 	enum dso_swap_type	needs_swap;
 	enum dso_binary_type	symtab_type;
 	enum dso_binary_type	binary_type;
+	u64		 db_id;
 	u8		 adjust_symbols:1;
 	u8		 has_build_id:1;
 	u8		 has_srcline:1;

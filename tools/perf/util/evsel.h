@@ -96,6 +96,7 @@ struct perf_evsel {
 	int			sample_read;
 	struct perf_evsel	*leader;
 	char			*group_name;
+	u64			db_id;
 };
 
 union u64_swap {

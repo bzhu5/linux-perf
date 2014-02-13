@@ -73,6 +73,7 @@ struct symbol {
 	struct rb_node	rb_node;
 	u64		start;
 	u64		end;
+	u64		db_id;
 	u16		namelen;
 	u8		binding;
 	bool		ignore;

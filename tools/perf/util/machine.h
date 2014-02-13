@@ -40,6 +40,7 @@ struct machine {
 	u64		  kernel_start;
 	symbol_filter_t	  symbol_filter;
 	pid_t		  *current_tid;
+	u64		  db_id;
 };
 
 static inline

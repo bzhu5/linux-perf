@@ -10,6 +10,7 @@ struct comm_str;
 struct comm {
 	struct comm_str *comm_str;
 	u64 start;
+	u64 db_id;
 	struct list_head list;
 	bool exec;
 };
