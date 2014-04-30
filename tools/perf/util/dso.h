@@ -90,6 +90,8 @@ struct dso_cache {
 	char data[0];
 };
 
+struct itrace_cache;
+
 /*
  * DSOs are put into both a list for fast iteration and rbtree for fast
  * long name lookup.
@@ -138,6 +140,7 @@ struct dso {
 		size_t		 file_size;
 		struct list_head open_entry;
 	} data;
+	struct itrace_cache *itrace_cache;
 
 	char		 name[0];
 };
