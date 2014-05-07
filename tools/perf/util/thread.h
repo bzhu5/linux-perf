@@ -8,6 +8,8 @@
 #include "symbol.h"
 #include <strlist.h>
 
+struct thread_stack;
+
 struct thread {
 	union {
 		struct rb_node	 rb_node;
@@ -25,6 +27,7 @@ struct thread {
 	int			comm_len;
 
 	void			*priv;
+	struct thread_stack	*ts;
 };
 
 struct machine;
