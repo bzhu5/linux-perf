@@ -260,6 +260,11 @@ struct aux_event {
 	u64	flags;
 };
 
+struct itrace_start_event {
+	struct perf_event_header header;
+	u32 pid, tid;
+};
+
 union perf_event {
 	struct perf_event_header	header;
 	struct mmap_event		mmap;
@@ -276,6 +281,7 @@ union perf_event {
 	struct build_id_event		build_id;
 	struct id_index_event		id_index;
 	struct aux_event		aux;
+	struct itrace_start_event	itrace_start;
 };
 
 void perf_event__print_totals(void);
@@ -315,6 +321,10 @@ int perf_event__process_aux(struct perf_tool *tool,
 			    union perf_event *event,
 			    struct perf_sample *sample,
 			    struct machine *machine);
+int perf_event__process_itrace_start(struct perf_tool *tool,
+				     union perf_event *event,
+				     struct perf_sample *sample,
+				     struct machine *machine);
 int perf_event__process_mmap(struct perf_tool *tool,
 			     union perf_event *event,
 			     struct perf_sample *sample,
@@ -374,6 +384,7 @@ size_t perf_event__fprintf_mmap(union perf_event *event, FILE *fp);
 size_t perf_event__fprintf_mmap2(union perf_event *event, FILE *fp);
 size_t perf_event__fprintf_task(union perf_event *event, FILE *fp);
 size_t perf_event__fprintf_aux(union perf_event *event, FILE *fp);
+size_t perf_event__fprintf_itrace_start(union perf_event *event, FILE *fp);
 size_t perf_event__fprintf(union perf_event *event, FILE *fp);
 
 u64 kallsyms__get_function_start(const char *kallsyms_filename,
