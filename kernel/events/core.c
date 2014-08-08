@@ -6963,6 +6963,18 @@ void perf_pmu_unregister(struct pmu *pmu)
 }
 EXPORT_SYMBOL_GPL(perf_pmu_unregister);
 
+/* call under pmus_srcu */
+static struct pmu *__perf_find_pmu(u32 type)
+{
+	struct pmu *pmu;
+
+	rcu_read_lock();
+	pmu = idr_find(&pmu_idr, type);
+	rcu_read_unlock();
+
+	return pmu;
+}
+
 struct pmu *perf_init_event(struct perf_event *event)
 {
 	struct pmu *pmu = NULL;
@@ -6971,9 +6983,7 @@ struct pmu *perf_init_event(struct perf_event *event)
 
 	idx = srcu_read_lock(&pmus_srcu);
 
-	rcu_read_lock();
-	pmu = idr_find(&pmu_idr, event->attr.type);
-	rcu_read_unlock();
+	pmu = __perf_find_pmu(event->attr.type);
 	if (pmu) {
 		if (!try_module_get(pmu->module)) {
 			pmu = ERR_PTR(-ENODEV);
