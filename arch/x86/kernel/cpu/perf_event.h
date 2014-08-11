@@ -148,6 +148,7 @@ struct cpu_hw_events {
 	 * Intel DebugStore bits
 	 */
 	struct debug_store	*ds;
+	unsigned int		bts_enabled;
 	u64			pebs_enabled;
 
 	/*
@@ -159,6 +160,11 @@ struct cpu_hw_events {
 	struct perf_branch_entry	lbr_entries[MAX_LBR_ENTRIES];
 	struct er_account		*lbr_sel;
 	u64				br_sel;
+
+	/*
+	 * Intel Processor Trace
+	 */
+	unsigned int			pt_enabled;
 
 	/*
 	 * Intel host/guest exclude bits

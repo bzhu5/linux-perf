@@ -455,8 +455,13 @@ struct event_constraint bts_constraint =
 
 void intel_pmu_enable_bts(u64 config)
 {
+	struct cpu_hw_events *cpuc = &__get_cpu_var(cpu_hw_events);
 	unsigned long debugctlmsr;
 
+	if (cpuc->pt_enabled)
+		return;
+
+	cpuc->bts_enabled = 1;
 	debugctlmsr = get_debugctlmsr();
 
 	debugctlmsr |= DEBUGCTLMSR_TR;
@@ -477,9 +482,10 @@ void intel_pmu_disable_bts(void)
 	struct cpu_hw_events *cpuc = &__get_cpu_var(cpu_hw_events);
 	unsigned long debugctlmsr;
 
-	if (!cpuc->ds)
+	if (!cpuc->ds || cpuc->pt_enabled)
 		return;
 
+	cpuc->bts_enabled = 0;
 	debugctlmsr = get_debugctlmsr();
 
 	debugctlmsr &=

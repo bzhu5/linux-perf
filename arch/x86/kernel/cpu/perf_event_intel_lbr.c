@@ -172,7 +172,9 @@ static void intel_pmu_lbr_reset_64(void)
 
 void intel_pmu_lbr_reset(void)
 {
-	if (!x86_pmu.lbr_nr)
+	struct cpu_hw_events *cpuc = &__get_cpu_var(cpu_hw_events);
+
+	if (!x86_pmu.lbr_nr || cpuc->pt_enabled)
 		return;
 
 	if (x86_pmu.intel_cap.lbr_format == LBR_FORMAT_32)
@@ -185,7 +187,7 @@ void intel_pmu_lbr_enable(struct perf_event *event)
 {
 	struct cpu_hw_events *cpuc = &__get_cpu_var(cpu_hw_events);
 
-	if (!x86_pmu.lbr_nr)
+	if (!x86_pmu.lbr_nr || cpuc->pt_enabled)
 		return;
 
 	/*
@@ -205,11 +207,10 @@ void intel_pmu_lbr_disable(struct perf_event *event)
 {
 	struct cpu_hw_events *cpuc = &__get_cpu_var(cpu_hw_events);
 
-	if (!x86_pmu.lbr_nr)
+	if (!x86_pmu.lbr_nr || !cpuc->lbr_users || cpuc->pt_enabled)
 		return;
 
 	cpuc->lbr_users--;
-	WARN_ON_ONCE(cpuc->lbr_users < 0);
 
 	if (cpuc->enabled && !cpuc->lbr_users) {
 		__intel_pmu_lbr_disable();
